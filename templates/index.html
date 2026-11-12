@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#18211e">
+  <title>GAC Fieldbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="GAC Fieldbook home">
+      <span class="brand-mark">G</span>
+      <span><strong>FIELD BOOK</strong><small>GALACTIC WAR ROOM</small></span>
+    </a>
+    <div class="profile-control">
+      <label for="profile-select">LOCAL PROFILE</label>
+      <select id="profile-select" aria-label="Local profile"></select>
+      <button id="add-profile" class="icon-button" type="button" aria-label="Add profile" title="Add profile">+</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="briefing" aria-labelledby="page-title">
+      <div class="briefing-copy">
+        <p class="eyebrow"><span class="status-dot"></span> LOCAL NETWORK <span class="divider">/</span> SHARED DATABASE</p>
+        <h1 id="page-title">GAC <span>FIELD BOOK</span></h1>
+        <p class="briefing-subtitle">Map the opposition. Keep your answers ready.</p>
+      </div>
+      <div class="sync-panel">
+        <span class="sync-label">UNIT DATABASE</span>
+        <span id="catalog-status" class="sync-status">Manual entry ready</span>
+        <button id="sync-units" class="sync-button" type="button">↻ <span>Sync Comlink</span></button>
+      </div>
+    </section>
+
+    <section class="setup-strip" aria-label="GAC setup">
+      <div class="setup-field league-field">
+        <label for="league-select">LEAGUE</label>
+        <select id="league-select"></select>
+      </div>
+      <div class="setup-field mode-field">
+        <span class="field-label">BATTLE FORMAT</span>
+        <div class="segmented" role="group" aria-label="Battle format">
+          <button type="button" data-mode="5v5" aria-pressed="true">5 <span>vs</span> 5</button>
+          <button type="button" data-mode="3v3" aria-pressed="false">3 <span>vs</span> 3</button>
+        </div>
+      </div>
+      <div class="setup-field ally-code-field">
+        <label for="my-ally-code">MY ALLY CODE</label>
+        <input id="my-ally-code" class="ally-code-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" aria-label="My ally code">
+      </div>
+      <div class="setup-field ally-code-field">
+        <label for="opponent-ally-code">OPPONENT ALLY CODE</label>
+        <input id="opponent-ally-code" class="ally-code-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" aria-label="Opponent ally code for this round">
+        <a id="opponent-profile-link" class="ally-code-link" target="_blank" rel="noopener noreferrer" hidden>Open SWGOH profile</a>
+      </div>
+      <div class="setup-count" aria-live="polite">
+        <span class="count-number" id="slot-count">3</span>
+        <span><strong>SQUAD DEFENSES</strong><small id="fleet-count">+ 1 fleet</small></span>
+      </div>
+    </section>
+
+    <nav class="round-nav" aria-label="GAC round">
+      <span class="round-kicker">WEEKLY MATCH</span>
+      <div id="round-tabs" class="round-tabs"></div>
+      <div class="save-actions">
+        <span id="save-state" class="save-state">Saved to shared database</span>
+        <button id="save-changes" class="save-button" type="button" disabled>Save</button>
+      </div>
+    </nav>
+
+    <nav class="view-switch" role="tablist" aria-label="Planner view">
+      <button id="plan-view-button" type="button" role="tab" aria-selected="true">Plan</button>
+      <button id="counter-plan-view-button" type="button" role="tab" aria-selected="false">Counter plan</button>
+      <button id="summary-view-button" type="button" role="tab" aria-selected="false">Summary</button>
+    </nav>
+
+    <div id="planner-view">
+      <section class="plan-heading">
+        <div>
+          <p class="eyebrow">OPPONENT SCOUTING</p>
+          <h2>Defense <span>and counters</span></h2>
+        </div>
+        <p class="plan-note">Add the leader you see on defense, then list any counter leaders you want to try.</p>
+      </section>
+
+      <section class="plan-list" aria-label="Opponent defenses">
+        <div class="list-heading"><span>DEFENSE LEADER</span><span>PLANNED COUNTER LEADERS</span></div>
+        <div id="squad-list"></div>
+      </section>
+
+      <section class="fleet-section">
+        <div class="fleet-heading">
+          <div><p class="eyebrow">HANGAR</p><h2>Fleet <span>defenses</span></h2></div>
+          <span id="fleet-summary" class="fleet-summary">1 SLOT</span>
+        </div>
+        <div id="fleet-list" class="fleet-list"></div>
+      </section>
+
+      <footer class="footnote">
+        <span>PLANS SYNC THROUGH YOUR LOCAL SERVER</span>
+        <span>Anyone on this network can access shared profiles.</span>
+      </footer>
+    </div>
+
+    <section id="counter-plan-view" class="summary-view" role="tabpanel" aria-labelledby="counter-plan-view-button" hidden>
+      <header class="summary-header">
+        <div>
+          <p id="counter-plan-kicker" class="eyebrow">ROUND 01 / CARBONITE / 5v5</p>
+          <h2>Counter <span>plan</span></h2>
+        </div>
+        <p id="counter-plan-counts" class="summary-counts"></p>
+      </header>
+      <div id="counter-plan-list" class="counter-plan-list"></div>
+      <p id="counter-plan-empty" class="summary-empty" hidden>No defenses are ready for a counter suggestion.</p>
+    </section>
+
+    <section id="summary-view" class="summary-view" role="tabpanel" aria-labelledby="summary-view-button" hidden>
+      <header class="summary-header">
+        <div>
+          <p id="summary-kicker" class="eyebrow">ROUND 01 / CARBONITE / 5v5</p>
+          <h2>Round <span>summary</span></h2>
+        </div>
+        <p id="summary-counts" class="summary-counts"></p>
+      </header>
+      <div id="summary-list" class="summary-list"></div>
+      <p id="summary-empty" class="summary-empty" hidden>No defense or counter leaders recorded for this round.</p>
+    </section>
+  </main>
+
+  <datalist id="character-options"></datalist>
+  <datalist id="ship-options"></datalist>
+  <dialog id="profile-dialog" class="profile-dialog">
+    <form id="profile-form" method="dialog">
+      <p class="eyebrow">SHARED PROFILE</p>
+      <h2>New profile</h2>
+      <label for="profile-name">PROFILE NAME</label>
+      <input id="profile-name" name="profile-name" maxlength="32" autocomplete="off" required>
+      <div class="dialog-actions">
+        <button id="cancel-profile" type="button">Cancel</button>
+        <button class="create-profile" type="submit">Create profile</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

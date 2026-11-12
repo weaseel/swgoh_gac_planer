@@ -1,0 +1,17 @@
+[Unit]
+Description=GAC Fieldbook
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=exec
+User=gac-fieldbook
+Group=gac-fieldbook
+WorkingDirectory=/opt/gac-fieldbook
+EnvironmentFile=/opt/gac-fieldbook/.env
+ExecStart=/opt/gac-fieldbook/.venv/bin/gunicorn --workers 2 --bind 0.0.0.0:8000 --access-logfile - --error-logfile - app:app
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
